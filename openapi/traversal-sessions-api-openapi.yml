@@ -1,0 +1,540 @@
+openapi: 3.1.0
+info:
+  title: Traversal Sessions API
+  version: 1.0.0
+  description: 'The V1 Sessions API lets you launch investigations, send follow-up questions,
+
+    and retrieve results programmatically. Sessions are the same investigation
+
+    primitive that powers the Traversal web application.
+
+
+    All endpoints require a Bearer token. The authenticated user must have at
+
+    least the `MEMBER` role within the organization, and the V1 API must be
+
+    enabled for that organization — otherwise endpoints return `403 Forbidden`.
+
+    '
+servers:
+- url: https://api.traversal.com
+  description: Traversal API
+security:
+- bearerAuth: []
+tags:
+- name: Sessions
+  description: Create, list, retrieve, and continue investigation sessions.
+paths:
+  /v1/sessions:
+    post:
+      operationId: createSession
+      tags:
+      - Sessions
+      summary: Create a session
+      description: 'Starts a new investigation. The request returns immediately while
+
+        Traversal investigates in the background — poll `GET /v1/sessions/{session_id}`
+
+        until the session reaches the `idle` state to retrieve the result.
+
+
+        Each organization is limited to **15 concurrent running sessions**
+
+        (a running investigation or an in-flight follow-up both count toward
+
+        this limit). Exceeding the limit returns `429 Too Many Requests` with
+
+        `retry_after`.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+            examples:
+              default:
+                value:
+                  input: Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.
+                  title: Elevated error rate in checkout service
+                  time: '2024-03-15T14:30:00Z'
+                  idempotency_key: pagerduty-incident-P12345
+      responses:
+        '200':
+          description: Idempotency key matched an existing session; the existing session is returned unchanged.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '201':
+          description: Session created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    get:
+      operationId: listSessions
+      tags:
+      - Sessions
+      summary: List sessions
+      description: 'Returns sessions created via the V1 API, scoped to the authenticated
+
+        user''s organization. Sessions created in the web app are not included.
+
+
+        **Requires the `admin` role.** API keys created by members can call
+
+        every other Sessions endpoint, but this one is admin-only because it
+
+        returns sessions across all users in the organization. Calls from a
+
+        member-role key return `403 Forbidden`.
+
+
+        If `page` and `limit` are both omitted, all sessions are returned in a
+
+        single response.
+
+        '
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number (1-indexed).
+        schema:
+          type: integer
+          minimum: 1
+      - name: limit
+        in: query
+        required: false
+        description: Number of sessions per page.
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: A page of sessions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /v1/sessions/{session_id}:
+    get:
+      operationId: getSession
+      tags:
+      - Sessions
+      summary: Get a session
+      description: 'Retrieves a single session, including its full conversation history.
+
+        This is the only endpoint that populates the `messages` array — all
+
+        other endpoints return `messages: null`.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: The session, with conversation history.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionWithMessages'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /v1/sessions/{session_id}/messages:
+    post:
+      operationId: sendFollowUpMessage
+      tags:
+      - Sessions
+      summary: Send a follow-up message
+      description: 'Sends a follow-up question on an existing session. Traversal uses the
+
+        full conversation history as context.
+
+
+        The session must be in the `idle` status. If it is `running` or
+
+        `follow_up_running`, the API returns `409 Conflict` with `retry_after`.
+
+        Poll `GET /v1/sessions/{session_id}` until the session status returns
+
+        to `idle` to retrieve the assistant response.
+
+
+        Follow-ups count toward the same **15 concurrent running sessions**
+
+        per-organization limit as `POST /v1/sessions`. If the organization is
+
+        already at the limit, the request returns `429 Too Many Requests` with
+
+        `retry_after`.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUpMessageRequest'
+            examples:
+              default:
+                value:
+                  input: Can you check if the database connection pool was exhausted during the incident?
+      responses:
+        '202':
+          description: Follow-up accepted; investigation is running.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowUpMessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+components:
+  schemas:
+    SessionList:
+      type: object
+      required:
+      - sessions
+      - count
+      - total
+      properties:
+        sessions:
+          type: array
+          description: Sessions on the current page.
+          items:
+            $ref: '#/components/schemas/Session'
+        count:
+          type: integer
+          description: Number of sessions on this page.
+        prev:
+          type:
+          - integer
+          - 'null'
+          description: Previous page number. `null` if first page.
+        next:
+          type:
+          - integer
+          - 'null'
+          description: Next page number. `null` if last page.
+        total:
+          type: integer
+          description: Total sessions across all pages.
+    Message:
+      type: object
+      required:
+      - id
+      - role
+      - markdown_content
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Unique message identifier.
+          example: msg-001-uuid
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          description: The author of the message.
+        markdown_content:
+          type: string
+          description: Message content in Markdown.
+          example: '## Investigation Summary
+
+
+            I investigated the elevated error rate...'
+        created_at:
+          type: string
+          format: date-time
+          description: When the message was created (UTC).
+          example: '2024-03-15T14:38:12Z'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              description: Human-readable explanation of the error.
+            retry_after:
+              type:
+              - integer
+              - 'null'
+              description: 'Suggested seconds to wait before retrying. Present on `429`
+
+                and `409` responses. When set, the response also includes a
+
+                standard `Retry-After` HTTP header with the same value.
+
+                '
+    SessionWithMessages:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        properties:
+          messages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Message'
+    CreateSessionRequest:
+      type: object
+      required:
+      - input
+      - idempotency_key
+      properties:
+        input:
+          type: string
+          description: The incident description or question to investigate.
+        title:
+          type:
+          - string
+          - 'null'
+          maxLength: 256
+          description: A short label for the session. Auto-generated if omitted.
+        time:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: ISO-8601 timestamp of when the incident occurred.
+        idempotency_key:
+          type: string
+          maxLength: 128
+          description: 'Unique client-generated key for idempotent creation. Submitting
+
+            the same key twice returns the original session (with `200 OK`)
+
+            rather than creating a new one. Use a value tied to the upstream
+
+            event you are reacting to (e.g., a PagerDuty incident ID) so
+
+            retries don''t duplicate sessions.
+
+            '
+        thinking_mode:
+          $ref: '#/components/schemas/ThinkingMode'
+    FollowUpMessageRequest:
+      type: object
+      required:
+      - input
+      properties:
+        input:
+          type: string
+          description: The follow-up question or instruction.
+        thinking_mode:
+          $ref: '#/components/schemas/ThinkingMode'
+    Session:
+      type: object
+      required:
+      - id
+      - status
+      - input
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique session identifier.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        status:
+          $ref: '#/components/schemas/SessionStatus'
+        title:
+          type:
+          - string
+          - 'null'
+          description: Human-readable session title.
+          example: Elevated error rate in checkout service
+        input:
+          type: string
+          description: The original incident description or question.
+          example: Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.
+        created_at:
+          type: string
+          format: date-time
+          description: When the session was created (UTC).
+          example: '2024-03-15T14:35:00Z'
+        updated_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the session was last updated (UTC).
+          example: '2024-03-15T14:38:12Z'
+        messages:
+          type:
+          - array
+          - 'null'
+          description: Conversation history. Only populated on `GET /v1/sessions/{session_id}`.
+          items:
+            $ref: '#/components/schemas/Message'
+    ThinkingMode:
+      type: string
+      enum:
+      - auto
+      - deep
+      - fast
+      default: auto
+      description: 'Controls how much investigation depth Traversal applies.
+
+        - `auto` — Traversal classifies the request and picks a depth.
+
+        - `deep` — force a thorough root-cause analysis.
+
+        - `fast` — run a quick, exploratory pass.
+
+        '
+    SessionStatus:
+      type: string
+      enum:
+      - running
+      - idle
+      - follow_up_running
+      - failed
+      description: '- `running` — a new investigation is in progress.
+
+        - `idle` — investigation is complete and ready for follow-ups.
+
+        - `follow_up_running` — a follow-up message is being processed.
+
+        - `failed` — the investigation or follow-up errored or timed out.
+
+        '
+    FollowUpMessageResponse:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        required:
+        - user_message_id
+        - assistant_message_id
+        properties:
+          user_message_id:
+            type: string
+            description: ID of the recorded user message.
+            example: msg-003-uuid
+          assistant_message_id:
+            type: string
+            description: 'ID of the assistant message that will contain the response.
+
+              Poll `GET /v1/sessions/{session_id}` until the session status
+
+              is `idle` to retrieve the completed response.
+
+              '
+            example: msg-004-uuid
+  responses:
+    Forbidden:
+      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceUnavailable:
+      description: Investigation infrastructure is not available.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, invalid, or revoked API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Session does not exist or does not belong to your organization.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: An unexpected error occurred on the server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid or missing fields in the request body. The `message` indicates which field failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    SessionId:
+      name: session_id
+      in: path
+      required: true
+      description: The unique identifier of the session.
+      schema:
+        type: string
+        format: uuid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token in the `Authorization` header — for example,
+
+        `Authorization: Bearer trv_ak_your_api_key_here`. Each key is bound to a
+
+        specific user and organization.
+
+        '
