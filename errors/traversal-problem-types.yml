@@ -1,0 +1,65 @@
+generated: '2026-07-21'
+method: derived
+source: >-
+  Derived from the 4xx/5xx responses in
+  openapi/traversal-sessions-openapi.yaml and enriched from
+  https://docs.traversal.com/api/overview#error-format
+description: >-
+  Error catalog for the Traversal V1 Sessions API. Errors use a consistent
+  JSON envelope (NOT RFC 9457 problem+json): { "error": { "message",
+  "retry_after" } }. When retry_after is present the response also carries a
+  standard Retry-After header.
+format: custom-json-envelope
+media_type: application/json
+rfc9457: false
+envelope: '{ "error": { "message": string, "retry_after": integer|null } }'
+docs: https://docs.traversal.com/api/overview#error-format
+problem_types:
+  - status: 400
+    name: BadRequest
+    title: Bad Request
+    meaning: Invalid or missing fields in the request body.
+    remediation: The error.message indicates which field failed validation; correct it and retry.
+  - status: 401
+    name: Unauthorized
+    title: Unauthorized
+    meaning: Missing, invalid, or revoked API key.
+    remediation: "Provide a valid `Authorization: Bearer trv_ak_...` token; regenerate the key if revoked."
+  - status: 403
+    name: Forbidden
+    title: Forbidden
+    meaning: >-
+      V1 API not enabled for the organization, or the authenticated user has an
+      insufficient role (e.g. a member-role key calling the admin-only list
+      endpoint).
+    remediation: Ask an org admin to enable the V1 API or use an admin-role key for admin-only endpoints.
+  - status: 404
+    name: NotFound
+    title: Not Found
+    meaning: Session does not exist or does not belong to your organization.
+    remediation: Verify the session_id and that it was created under your organization.
+  - status: 409
+    name: Conflict
+    title: Conflict
+    meaning: >-
+      Session is not `idle` (still `running` or `follow_up_running`) when a
+      follow-up was sent. Includes retry_after.
+    remediation: Poll GET /v1/sessions/{session_id} until status is `idle`, then resend after retry_after seconds.
+  - status: 429
+    name: TooManyRequests
+    title: Too Many Requests
+    meaning: >-
+      Organization reached the limit of 15 concurrent running sessions (new
+      investigations and in-flight follow-ups both count). Includes retry_after
+      (default 30s).
+    remediation: Wait retry_after seconds (honor the Retry-After header) before retrying.
+  - status: 500
+    name: InternalServerError
+    title: Internal Server Error
+    meaning: An unexpected error occurred on the server.
+    remediation: Retry with backoff; contact support if it persists.
+  - status: 503
+    name: ServiceUnavailable
+    title: Service Unavailable
+    meaning: Investigation infrastructure is not available.
+    remediation: Retry with backoff.

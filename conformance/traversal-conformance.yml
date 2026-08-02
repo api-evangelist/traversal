@@ -1,0 +1,57 @@
+generated: '2026-07-21'
+method: derived
+source: >-
+  Derived from openapi/traversal-sessions-openapi.yaml and
+  https://docs.traversal.com/api/overview; compliance claims from
+  https://docs.traversal.com/responsible-use/security.
+description: >-
+  Assertions about which industry / cross-cutting standards the Traversal V1
+  Sessions API conforms to. Each entry records whether Traversal conforms and
+  the evidence.
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      Auth is a static Bearer API key (trv_ak_), not an OAuth 2.0 flow; no
+      oauth2 securityScheme in the OpenAPI.
+  - id: oidc
+    conforms: false
+    evidence: No OpenID Connect discovery or flows documented for the API.
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      Errors use a custom { "error": { "message", "retry_after" } } envelope,
+      not application/problem+json.
+  - id: rfc8594
+    conforms: false
+    evidence: No Sunset/Deprecation header policy documented.
+  - id: pagination
+    conforms: true
+    evidence: >-
+      Page-number pagination on GET /v1/sessions (page, limit; prev/next/count/
+      total response fields).
+  - id: idempotency
+    conforms: true
+    evidence: >-
+      Required client-generated idempotency_key on POST /v1/sessions; replay
+      returns the original session with 200.
+  - id: retry-after
+    conforms: true
+    evidence: >-
+      429 and 409 responses set error.retry_after and a standard Retry-After
+      HTTP header.
+  - id: json
+    conforms: true
+    evidence: All requests and responses are application/json.
+  - id: openapi
+    conforms: true
+    evidence: Publishes an OpenAPI 3.1.0 description at docs.traversal.com/api/openapi.yaml.
+  - id: soc2
+    conforms: true
+    evidence: SOC 2 Type II attestation (Trust Center + Security docs).
+  - id: gdpr
+    conforms: true
+    evidence: Aligns with GDPR requirements (Security docs / Trust Center).
+  - id: hipaa
+    conforms: true
+    evidence: Aligns with HIPAA requirements (Security docs).

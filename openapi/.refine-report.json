@@ -1,0 +1,14 @@
+{
+  "provider": "traversal",
+  "sources": [
+    "traversal-sessions-api-openapi.yml"
+  ],
+  "outputs": [
+    "traversal-sessions-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

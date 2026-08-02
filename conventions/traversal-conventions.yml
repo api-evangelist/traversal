@@ -1,0 +1,91 @@
+generated: '2026-07-21'
+method: searched
+source: >-
+  https://docs.traversal.com/api/overview and
+  https://docs.traversal.com/api/authentication, plus derivation from
+  openapi/traversal-sessions-openapi.yaml — the cross-cutting request/response
+  conventions that apply to every Traversal Sessions API endpoint.
+description: >-
+  How Traversal's V1 Sessions API behaves across every operation: authentication
+  style, idempotency, pagination, versioning, async polling model, error
+  envelope, and rate-limit / concurrency signaling. These are the
+  developer-experience / runtime-semantics conventions that OpenAPI does not
+  fully express.
+
+base_url: https://api.traversal.com
+api_style: REST over HTTPS, JSON requests and responses
+
+authentication:
+  scheme: HTTP Bearer token (API key)
+  key_format: trv_ak_ prefix
+  key_binding: Each key is bound to the creating user and their organization, and inherits that user's role.
+  roles: [member, admin]
+  role_notes: >-
+    Most endpoints require the `member` role; GET /v1/sessions (list) requires
+    `admin`. The V1 API must also be enabled for the organization or endpoints
+    return 403.
+  docs: https://docs.traversal.com/api/authentication
+  detail: authentication/traversal-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism: idempotency_key field in the JSON request body (required on POST /v1/sessions)
+  applies_to: Session creation (POST /v1/sessions)
+  key_format: Client-generated unique value, max 128 chars; tie it to the upstream event (e.g. a PagerDuty incident ID).
+  conflict_behavior: >-
+    Submitting the same idempotency_key returns the original session with 200 OK
+    (rather than creating a new one with 201).
+  docs: https://docs.traversal.com/api/sessions
+
+pagination:
+  style: page-number
+  request_params:
+    page: Page number, 1-indexed (optional)
+    limit: Number of sessions per page (optional)
+  omit_behavior: If both page and limit are omitted, all sessions are returned in a single response.
+  response_fields:
+    sessions: array of results
+    count: number of sessions on this page
+    prev: previous page number (null on first page)
+    next: next page number (null on last page)
+    total: total sessions across all pages
+  docs: https://docs.traversal.com/api/sessions
+
+async_model:
+  description: >-
+    Investigations are asynchronous. POST /v1/sessions returns immediately with
+    a session in `running` state; poll GET /v1/sessions/{session_id} until
+    status is `idle` to read the assistant result. Follow-ups (POST
+    .../messages) return 202 and must likewise be polled to `idle`.
+  states: [running, idle, follow_up_running, failed]
+  thinking_mode: auto | deep | fast (controls investigation depth; default auto)
+
+versioning:
+  scheme: URI path version
+  current: v1
+  detail: lifecycle/traversal-lifecycle.yml
+  changelog: changelog/traversal-changelog.yml
+
+error_envelope:
+  media_type: application/json
+  rfc9457: false
+  shape: '{ "error": { "message": string, "retry_after": integer|null } }'
+  retry_after_header: >-
+    When error.retry_after is present (429 and 409), the response also includes
+    a standard Retry-After HTTP header with the same value.
+  detail: errors/traversal-problem-types.yml
+  docs: https://docs.traversal.com/api/overview#error-format
+
+rate_limits:
+  model: per-organization concurrency
+  concurrency_limit: 15 concurrent running sessions (new investigations and in-flight follow-ups both count)
+  signal_status: 429 Too Many Requests with retry_after (default 30s)
+  conflict_status: 409 Conflict with retry_after when a follow-up targets a non-idle session
+
+other_conventions:
+  - name: Timestamps
+    detail: ISO-8601 UTC date-time strings.
+  - name: Identifiers
+    detail: Session IDs are UUIDs.
+  - name: Self-hosted base URL
+    detail: Single-tenant SaaS and BYOC customers use the API endpoint of their dedicated deployment instead of api.traversal.com.

@@ -1,0 +1,38 @@
+generated: '2026-07-21'
+method: searched
+probe: true
+source: >-
+  https://trust.traversal.com/ and
+  https://docs.traversal.com/responsible-use/security
+url: https://trust.traversal.com/
+description: >-
+  Traversal maintains a public Trust Center for requesting compliance reports
+  and security documentation. Certifications and alignments below are stated on
+  the Security docs page.
+certifications:
+  - name: SOC 2 Type II
+    kind: attestation
+  - name: GDPR
+    kind: alignment
+  - name: HIPAA
+    kind: alignment
+assurance:
+  - Regular third-party penetration testing
+security_contact: security@traversal.com
+data_handling:
+  - Read-only integration access (no write privileges to data stores or code)
+  - Agent-less by design (no sidecars / background processes in customer environment)
+  - Customer data not used for cross-customer training or model improvement
+  - Strict per-customer isolation; in-context use only
+evidence:
+  - source: https://docs.traversal.com/responsible-use/security
+    keywords:
+      - SOC 2 Type II
+      - GDPR
+      - HIPAA
+      - penetration testing
+  - source: https://trust.traversal.com/
+    keywords:
+      - soc 2
+      - trust center
+      - gdpr

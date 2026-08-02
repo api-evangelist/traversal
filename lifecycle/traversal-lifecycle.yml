@@ -1,0 +1,33 @@
+generated: '2026-07-21'
+method: searched
+source: >-
+  https://docs.traversal.com/api/overview, https://docs.traversal.com/changelog,
+  and https://status.traversal.com — versioning, change communication, and
+  status surfaces for the Traversal platform and V1 Sessions API.
+description: >-
+  Lifecycle posture for the Traversal V1 Sessions API: how the API is versioned,
+  how changes are communicated, and where availability is published.
+versioning:
+  scheme: URI path version
+  current_version: v1
+  location: Path prefix (/v1/...)
+  backwards_compatibility: >-
+    Recent additions (e.g. the optional thinking_mode field, July 2026) were
+    introduced additively — "existing integrations need no changes."
+status_page:
+  url: https://status.traversal.com
+  present: true
+changelog:
+  url: https://docs.traversal.com/changelog
+  artifact: changelog/traversal-changelog.yml
+deprecation:
+  policy_documented: false
+  notes: >-
+    No formal deprecation/sunset policy (RFC 8594 Sunset/Deprecation headers) was
+    found in the public docs as of the enrichment date. Changes to date have been
+    additive and backward-compatible.
+deployment_options:
+  - SaaS (multi-tenant)
+  - Single-tenant SaaS (dedicated, Traversal-operated AWS account)
+  - BYOC (Bring Your Own Cloud)
+docs: https://docs.traversal.com/api/overview

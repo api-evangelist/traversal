@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/traversal-sessions-openapi.yaml
+description: >-
+  Entity-relationship model for the Traversal V1 Sessions API, derived from the
+  OpenAPI component schemas and their $ref links.
+entities:
+  - name: Session
+    description: An investigation primitive — the same one that powers the web app.
+    id_field: id
+    id_format: uuid
+    key_fields: [id, status, title, input, created_at, updated_at]
+    status_enum: [running, idle, follow_up_running, failed]
+  - name: Message
+    description: A single turn in a session's conversation history (user or assistant).
+    id_field: id
+    key_fields: [id, role, markdown_content, created_at]
+    role_enum: [user, assistant]
+relationships:
+  - from: Session
+    to: Message
+    type: has_many
+    via: messages
+    notes: >-
+      The messages array is only populated on GET /v1/sessions/{session_id};
+      all other endpoints return messages: null.
+  - from: Message
+    to: Session
+    type: belongs_to
+    via: session (path session_id)
+notes: >-
+  No id-prefix scheme is documented for sessions (UUIDs). API keys carry a
+  trv_ak_ prefix. Auxiliary request/response shapes (CreateSessionRequest,
+  SessionList, FollowUpMessageRequest/Response) are transport wrappers, not
+  first-class entities.

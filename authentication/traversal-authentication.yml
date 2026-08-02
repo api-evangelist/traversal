@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/traversal-sessions-openapi.yaml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: |-
+    Bearer token in the `Authorization` header — for example,
+    `Authorization: Bearer trv_ak_your_api_key_here`. Each key is bound to a
+    specific user and organization.
+  sources:
+  - openapi/traversal-sessions-openapi.yaml

@@ -1,0 +1,67 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.traversal.com/changelog
+description: >-
+  Traversal publishes a dated product changelog covering the Sessions API, web
+  app, Workers, Slack, and security/deployment. Recent-window entries captured
+  verbatim from the public changelog.
+scheme: dated-updates
+api_versioning: URI path (currently /v1); see lifecycle/traversal-lifecycle.yml
+docs: https://docs.traversal.com/changelog
+entries:
+  - date: '2026-07-20'
+    tags: [API, Investigations]
+    title: Choose investigation depth over the Sessions API
+    breaking: false
+    additions: true
+    highlights:
+      - >-
+        Sessions API now accepts an optional `thinking_mode` (auto | deep |
+        fast) on both session creation and follow-ups; existing integrations
+        need no changes.
+      - >-
+        Follow-ups now count toward the same per-organization concurrency limit
+        as new sessions, so a burst of follow-ups is throttled with a 429.
+  - date: '2026-07-20'
+    tags: [Web app, Analytics]
+    title: Revamped Analytics page
+    breaking: false
+    additions: true
+    highlights:
+      - >-
+        New Org-Admin Analytics page (app.traversal.com/analytics) with usage
+        over time, top users/channels, and session breakdowns by origin (Web,
+        Slack, API, MCP).
+  - date: '2026-07-13'
+    tags: [Workers, Slack, Investigations]
+    title: Workers read live incident transcripts
+    breaking: false
+    additions: true
+    highlights:
+      - >-
+        Workers can read a live incident call's transcript in real time (private
+        beta) and fold it into an investigation.
+  - date: '2026-07-11'
+    tags: [Web app, UX/UI]
+    title: "Jump to anything with Command-K"
+    breaking: false
+    additions: true
+    highlights:
+      - Command-K quick search to start/open investigations and integrations.
+  - date: '2026-07-09'
+    tags: [Web app, UX/UI]
+    title: 24-hour time format
+    breaking: false
+    additions: true
+    highlights:
+      - New Time format personalization option (12-hour or 24-hour).
+  - date: '2026-07-07'
+    tags: [Security]
+    title: Single-tenant SaaS deployment
+    breaking: false
+    additions: true
+    highlights:
+      - >-
+        New deployment option between multi-tenant SaaS and full BYOC: a
+        dedicated single-tenant instance in an isolated, Traversal-operated AWS
+        account.

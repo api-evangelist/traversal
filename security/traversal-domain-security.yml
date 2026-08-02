@@ -1,0 +1,27 @@
+generated: '2026-07-21'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.traversal.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 15 17:47:18 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: api.traversal.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 10 19:23:38 2026 GMT
+  hsts: null
+domains:
+- domain: traversal.com
+  dnssec: false
+  caa:
+  - 0 issue "pki.goog; cansignhttpexchanges=yes"
+  - 0 issue "amazon.com"
+  - 0 issue "amazontrust.com"
+  - 0 issue "godaddy.com"
+  - 0 issue "letsencrypt.org"
+  spf: true
+  dmarc: true
+  dmarc_policy: none

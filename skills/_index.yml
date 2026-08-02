@@ -1,0 +1,19 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/traversal-sessions-openapi.yaml
+description: >-
+  Packaged Agent Skills for the Traversal V1 Sessions API, each grounded in real
+  operationIds from the OpenAPI description. No provider-published skills /
+  AGENTS.md were found; these are generated from the spec and conventions.
+skills:
+  - name: traversal-investigate-incident
+    file: traversal-investigate-incident.md
+    api: Traversal Sessions API
+    operations:
+      - createSession
+      - getSession
+      - sendFollowUpMessage
+      - listSessions
+    summary: >-
+      Start an AI-SRE investigation for a production incident, poll it to idle,
+      read the root cause, and drill in with follow-ups.

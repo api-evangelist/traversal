@@ -1,0 +1,72 @@
+# Traversal
+
+## Docs
+
+- [Create a session](https://docs.traversal.com/api-reference/sessions/create-a-session.md): Starts a new investigation. The request returns immediately while Traversal investigates in the background — poll `GET /v1/sessions/{session_id}` until the session reaches the `idle` state to retrieve the result.
+- [Get a session](https://docs.traversal.com/api-reference/sessions/get-a-session.md): Retrieves a single session, including its full conversation history. This is the only endpoint that populates the `messages` array — all other endpoints return `messages: null`.
+- [List sessions](https://docs.traversal.com/api-reference/sessions/list-sessions.md): Returns sessions created via the V1 API, scoped to the authenticated user's organization. Sessions created in the web app are not included.
+- [Send a follow-up message](https://docs.traversal.com/api-reference/sessions/send-a-follow-up-message.md): Sends a follow-up question on an existing session. Traversal uses the full conversation history as context.
+- [Authentication](https://docs.traversal.com/api/authentication.md): Create and manage API keys to authenticate with the Traversal API.
+- [Overview](https://docs.traversal.com/api/overview.md): Introduction to the Traversal API — base URL, authentication, and error handling.
+- [Sessions API](https://docs.traversal.com/api/sessions.md): Programmatically create investigations, send follow-up questions, and retrieve results from Traversal using the V1 Sessions API.
+- [Bring Your Own Cloud](https://docs.traversal.com/architecture/byoc.md): Learn about Traversal's BYOC (Bring Your Own Cloud) deployment option: requirements, expectations, deployment process, and responsibility matrix.
+- [Traversal Connector](https://docs.traversal.com/architecture/connector.md): The Traversal Connector is a lightweight service deployed in your environment that enables the Traversal platform to securely access your private data sources and internal systems — without requiring any inbound network access to your environment.
+- [Deployment options](https://docs.traversal.com/architecture/intro.md): Traversal's architecture, security model, and deployment options — SaaS, single-tenant SaaS, and BYOC.
+- [Single-tenant SaaS](https://docs.traversal.com/architecture/single-tenant-saas.md): Learn about Traversal's single-tenant SaaS deployment option: a dedicated, isolated deployment of Traversal fully owned and operated by Traversal in its own cloud.
+- [Authentication](https://docs.traversal.com/get-started/authentication.md): How users sign in to Traversal, how organizations manage access, and how to troubleshoot common authentication issues.
+- [Integrations](https://docs.traversal.com/get-started/integrations.md): Connect your existing observability stack so Traversal can analyze live incidents with full context.
+- [Quickstart](https://docs.traversal.com/get-started/quickstart.md): Spin up your first investigation, ask about an incident, or explore your system using natural-language questions.
+- [Alertmanager](https://docs.traversal.com/integrations/alertmanager.md): Connect Alertmanager to query active and historical alerts during investigations.
+- [Anthropic](https://docs.traversal.com/integrations/anthropic.md): Connect Anthropic to use Claude as an LLM provider for investigations.
+- [AppDynamics](https://docs.traversal.com/integrations/appdynamics.md): Connect AppDynamics to pull application metrics and health signals during investigations.
+- [AWS Bedrock](https://docs.traversal.com/integrations/aws-bedrock.md): Use AWS Bedrock as an LLM gateway for Claude models in Traversal.
+- [Confluence](https://docs.traversal.com/integrations/confluence.md): Connect Confluence to surface runbooks and documentation during investigations.
+- [Coralogix](https://docs.traversal.com/integrations/coralogix.md): Connect Coralogix to query logs and metrics during investigations.
+- [Datadog](https://docs.traversal.com/integrations/datadog.md): Connect Datadog to pull metrics, logs, traces, alerts, and events during investigations.
+- [Dynatrace](https://docs.traversal.com/integrations/dynatrace.md): Connect Dynatrace to pull entities, problems, metrics, logs, traces, and Grail data during investigations.
+- [Elasticsearch](https://docs.traversal.com/integrations/elasticsearch.md): Connect Elasticsearch to query log indices during investigations.
+- [FireHydrant](https://docs.traversal.com/integrations/firehydrant.md): Connect FireHydrant for incident management context during investigations.
+- [GitHub](https://docs.traversal.com/integrations/github.md): Connect GitHub to correlate incidents with recent code changes.
+- [GitLab](https://docs.traversal.com/integrations/gitlab.md): Connect GitLab to correlate incidents with recent code changes.
+- [Grafana](https://docs.traversal.com/integrations/grafana.md): Connect Grafana to query dashboards, metrics, logs, traces, and alerts during investigations.
+- [incident.io](https://docs.traversal.com/integrations/incident-io.md): Connect incident.io for incident management context during investigations.
+- [Jira](https://docs.traversal.com/integrations/jira.md): Connect Jira for issue tracking and project context during investigations.
+- [Linear](https://docs.traversal.com/integrations/linear.md): Connect Linear for issue tracking and project context during investigations.
+- [Loki](https://docs.traversal.com/integrations/loki.md): Connect Grafana Loki to query and analyze logs during investigations.
+- [MCP Servers](https://docs.traversal.com/integrations/mcp-servers.md): Connect any Model Context Protocol server so Traversal can call its tools during investigations.
+- [Mimir](https://docs.traversal.com/integrations/mimir.md): Connect Grafana Mimir for long-term Prometheus metrics storage during investigations.
+- [MotherDuck](https://docs.traversal.com/integrations/motherduck.md): Connect MotherDuck for serverless analytics queries during investigations.
+- [Notion](https://docs.traversal.com/integrations/notion.md): Connect Notion to surface internal documentation during investigations.
+- [OpenAI](https://docs.traversal.com/integrations/openai.md): Connect OpenAI to use GPT models as an LLM provider for investigations.
+- [OpenSearch](https://docs.traversal.com/integrations/opensearch.md): Connect OpenSearch to query log and event indices during investigations.
+- [Prometheus](https://docs.traversal.com/integrations/prometheus.md): Connect Prometheus to query time-series metrics during investigations.
+- [Sentry](https://docs.traversal.com/integrations/sentry.md): Connect Sentry for error tracking and issue context during investigations.
+- [ServiceNow](https://docs.traversal.com/integrations/servicenow.md): Connect ServiceNow for ITSM, ITOM / Event Management, CMDB, and ACC context during investigations.
+- [Slack](https://docs.traversal.com/integrations/slack.md): Install the Traversal Slack app in your workspace.
+- [Splunk](https://docs.traversal.com/integrations/splunk.md): Connect Splunk to run read-only log searches during investigations.
+- [Tempo](https://docs.traversal.com/integrations/tempo.md): Connect Grafana Tempo to query distributed traces during investigations.
+- [ThousandEyes](https://docs.traversal.com/integrations/thousandeyes.md): Connect ThousandEyes for network intelligence and monitoring data during investigations.
+- [VictoriaMetrics](https://docs.traversal.com/integrations/victoria-metrics.md): Connect VictoriaMetrics for high-performance metrics querying during investigations.
+- [About Traversal](https://docs.traversal.com/introduction.md): AI SRE that automatically detects incidents, triages alerts, and performs root cause analysis across your entire observability stack.
+- [Data privacy](https://docs.traversal.com/responsible-use/data-privacy.md): How Traversal handles your data — including isolation guarantees, read-only access, integration scopes, and compliance alignment.
+- [Security](https://docs.traversal.com/responsible-use/security.md): Traversal's security architecture, certifications, and controls — including SOC 2 Type II, GDPR, HIPAA, and read-only access design.
+- [Traversal Connector](https://docs.traversal.com/setup/connector.md): Deploy the Traversal Connector to Kubernetes via Helm or to any container runtime via environment variables.
+- [LLM Providers & BYOK](https://docs.traversal.com/setup/llm-providers.md): How Traversal uses LLM providers to power investigations, and how to bring your own key (BYOK) for control over inference region, retention terms, and cost.
+- [PrivateLink](https://docs.traversal.com/setup/privatelink.md): Establish AWS PrivateLink connections between your VPC and your dedicated Traversal deployment (single-tenant SaaS or BYOC) so traffic to Traversal services stays on the AWS private network.
+- [Traversal Processor](https://docs.traversal.com/setup/processor.md): Deploy the Traversal Processor to Kubernetes via Helm or to any container runtime via environment variables.
+- [Redaction](https://docs.traversal.com/setup/redaction.md): Scrub sensitive information from your data before it leaves your environment. Configurable and customizable.
+- [Alert Intelligence](https://docs.traversal.com/using-traversal/alert-intelligence.md): Traversal triages every alert in your Slack channels — urgency at a glance, the reasoning behind it, and tuning suggestions for the noisy ones.
+- [Tips](https://docs.traversal.com/using-traversal/best-practices.md): Get the most out of Traversal by anchoring investigations in time, asking specific questions, and sharing your team's institutional knowledge.
+- [Customization](https://docs.traversal.com/using-traversal/customization.md): Give Traversal standing instructions — for your own investigations, or for a whole Slack channel.
+- [Investigations](https://docs.traversal.com/using-traversal/investigations.md): Start an investigation, ask about an incident, or explore your system using natural language.
+- [Knowledge Bank](https://docs.traversal.com/using-traversal/knowledge-bank.md): Encode your team's runbooks, heuristics, and tribal knowledge to sharpen Traversal's investigations.
+- [MCP](https://docs.traversal.com/using-traversal/mcp.md): Run Traversal from Claude, Cursor, and other AI clients — and let your local agent and Traversal investigate together.
+- [Post-mortems](https://docs.traversal.com/using-traversal/post-mortems.md): Generate a post-mortem from a Slack incident channel or the Traversal web app — automatically or on demand.
+- [Prompt library](https://docs.traversal.com/using-traversal/prompt-library.md): Example questions to ask Traversal — from active incident investigation to onboarding into unfamiliar systems.
+- [Slack](https://docs.traversal.com/using-traversal/slack.md): Investigate incidents, triage alerts, and explore system behavior directly from Slack.
+- [Understanding results](https://docs.traversal.com/using-traversal/understanding-results.md): Understand how Traversal structures its root cause analysis output, confidence ratings, evidence citations, and recommendations.
+- [Traversal Workers](https://docs.traversal.com/using-traversal/workers.md): Proactive teammates that help you get the most out of Traversal.
+
+## OpenAPI Specs
+
+- [openapi](https://docs.traversal.com/api/openapi.yaml)

@@ -1,23 +1,67 @@
 aid: traversal
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/traversal.png
 name: Traversal
-description: 'Traversal is a company surfaced as a portfolio company of kleiner-perkins, sv-angel and
-  added to the API Evangelist network as a stub for enrichment. Sector: ai. This profile is a lead awaiting
-  the enrichment pipeline.'
+description: >-
+  Traversal is an AI SRE (Site Reliability Engineering) platform that
+  autonomously triages alerts, performs root-cause analysis, and helps prevent
+  production incidents across an enterprise's entire observability stack. Founded
+  in 2023 by AI researchers from MIT, Columbia, Berkeley, and Cornell and based
+  in New York City, Traversal created the "AI SRE" category using causal machine
+  learning and agentic AI. Its V1 Sessions API and hosted MCP server let teams
+  launch investigations programmatically and from AI clients (Claude, Cursor,
+  and others). Backed by Sequoia and Kleiner Perkins (~$53M raised).
 url: https://raw.githubusercontent.com/api-evangelist/traversal/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - kleiner-perkins
 - sv-angel
-x-tier: stub
-x-tier-reason: portfolio-lead
+- sequoia
+- nfdg
+x-tier: profiled
+x-tier-reason: enriched-from-public-docs
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-- Ai
-apis: []
+- AI
+- AI SRE
+- Site Reliability Engineering
+- Observability
+- Incident Management
+- Root Cause Analysis
+- DevOps
+- MCP
+apis:
+- aid: traversal:traversal-sessions-api
+  name: Traversal Sessions API
+  description: Create, list, retrieve, and continue investigation sessions.
+  humanURL: https://docs.traversal.com/api/overview
+  baseURL: https://api.traversal.com
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/traversal-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.traversal.com/api/overview
+  - type: APIReference
+    url: https://docs.traversal.com/api-reference/sessions/create-a-session
+  - type: Authentication
+    url: authentication/traversal-authentication.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -26,3 +70,58 @@ maintainers:
 common:
 - type: Website
   url: https://www.traversal.com
+- type: Documentation
+  url: https://docs.traversal.com
+- type: APIReference
+  url: https://docs.traversal.com/api/overview
+- type: GettingStarted
+  url: https://docs.traversal.com/get-started/quickstart
+- type: Blog
+  url: https://www.traversal.com/blog
+- type: Support
+  url: mailto:support@traversal.com
+- type: SignUp
+  url: https://app.traversal.com/login
+- type: OpenAPI
+  url: openapi/traversal-sessions-openapi.yaml
+- type: Overlay
+  url: overlays/traversal-sessions-overlay.yaml
+- type: MCPServer
+  url: mcp/traversal-mcp.yml
+- type: LLMsTxt
+  url: llms/traversal-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Conventions
+  url: conventions/traversal-conventions.yml
+- type: Idempotency
+  url: conventions/traversal-conventions.yml
+- type: ErrorCatalog
+  url: errors/traversal-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/traversal-lifecycle.yml
+- type: ChangeLog
+  url: changelog/traversal-changelog.yml
+- type: StatusPage
+  url: https://status.traversal.com
+- type: Conformance
+  url: conformance/traversal-conformance.yml
+- type: Compliance
+  url: security/traversal-trust-center.yml
+- type: DataModel
+  url: data-model/traversal-data-model.yml
+- type: Authentication
+  url: authentication/traversal-authentication.yml
+- type: TrustCenter
+  url: security/traversal-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/traversal-vulnerability-disclosure.yml
+- type: Security
+  url: security/traversal-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/traversal-domain-security.yml
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 16
+  pass: local-v1

@@ -1,0 +1,44 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for the Traversal Sessions API
+  version: 1.0.0
+  x-generated: '2026-07-21'
+  x-method: generated
+  x-source: >-
+    Enhancements layered on openapi/traversal-sessions-openapi.yaml from
+    docs.traversal.com. Does not mutate the original spec.
+extends: ../openapi/traversal-sessions-openapi.yaml
+actions:
+  - target: $.info
+    description: Tag the API with its category and link canonical developer surfaces.
+    update:
+      x-api-category: AI SRE (Site Reliability Engineering)
+      x-provider: Traversal AI, Inc.
+      x-documentation: https://docs.traversal.com/api/overview
+      x-changelog: https://docs.traversal.com/changelog
+      x-status-page: https://status.traversal.com
+  - target: $.info
+    description: Record the runtime conventions that OpenAPI does not fully express.
+    update:
+      x-conventions:
+        idempotency: Required idempotency_key body field on POST /v1/sessions.
+        pagination: Page-number (page/limit) on GET /v1/sessions.
+        async_model: Poll GET /v1/sessions/{session_id} until status is idle.
+        concurrency_limit: 15 concurrent running sessions per organization (429 with retry_after).
+        error_envelope: '{ "error": { "message", "retry_after" } } — not RFC 9457.'
+  - target: $.paths['/v1/sessions'].post
+    description: Flag the idempotency and concurrency semantics on session creation.
+    update:
+      x-idempotent: true
+      x-idempotency-field: idempotency_key
+      x-concurrency-limited: true
+  - target: $.paths['/v1/sessions/{session_id}/messages'].post
+    description: Note the poll-to-idle async model for follow-ups.
+    update:
+      x-async: true
+      x-poll: GET /v1/sessions/{session_id} until status is idle
+  - target: $.components.securitySchemes.bearerAuth
+    description: Document the API key prefix and how to obtain one.
+    update:
+      x-key-prefix: trv_ak_
+      x-key-provisioning: https://app.traversal.com/settings/api-keys

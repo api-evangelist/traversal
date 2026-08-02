@@ -1,0 +1,51 @@
+generated: '2026-07-21'
+method: searched
+status: published
+source: https://docs.traversal.com/using-traversal/mcp
+description: >-
+  Traversal operates an official hosted (remote) MCP server that lets any
+  streamable-http MCP client — Claude Code, Claude Desktop, Cursor, OpenCode,
+  ChatGPT, Windsurf, VS Code — run investigations against a production stack.
+  Over MCP, Traversal acts as a peer agent: the local agent handles code /
+  terminal / kubectl while Traversal investigates across metrics, logs, traces,
+  deployments and topology, handing executable next steps back. Agent-to-agent
+  calls run in "Lightning mode" (a first pass in ~30s–2min). Tool list captured
+  verbatim from the Traversal MCP documentation.
+server:
+  name: Traversal
+  transport: http
+  transport_detail: streamable-http
+  url: https://api.prod.traversal.com/mcp/
+  auth: api_key
+  auth_detail: >-
+    Authorization: Bearer trv_ak_... — an API key generated in the Traversal
+    web app under Settings > API keys (app.traversal.com/settings/api-keys).
+  self_hosted_note: >-
+    Single-tenant SaaS and BYOC deployments use the organization's own API URL
+    + /mcp/.
+clients:
+  - Claude Code
+  - Claude Desktop
+  - Cursor
+  - OpenCode
+  - ChatGPT
+  - Windsurf
+  - VS Code
+tools:
+  - name: investigate
+    description: >-
+      Run a fast first-pass (Lightning mode) investigation, typically 30s–2min.
+      The agent passes the incident, what it can access locally, and how focused
+      to be.
+  - name: follow_up
+    description: >-
+      Continue an investigation using its session_id — drill into findings,
+      verify a hypothesis, or feed back evidence the agent gathered locally.
+  - name: get_investigation
+    description: >-
+      Get the status and report for an investigation, with a ui_url link to the
+      web app.
+  - name: list_investigations
+    description: List recent investigations for your organization.
+  - name: product_feedback
+    description: Send feedback about the MCP experience to the Traversal team.
