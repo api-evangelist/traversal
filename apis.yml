@@ -83,7 +83,7 @@ common:
 - type: SignUp
   url: https://app.traversal.com/login
 - type: OpenAPI
-  url: openapi/traversal-sessions-openapi.yaml
+  url: openapi/_original/traversal-sessions-openapi.yaml
 - type: Overlay
   url: overlays/traversal-sessions-overlay.yaml
 - type: MCPServer
