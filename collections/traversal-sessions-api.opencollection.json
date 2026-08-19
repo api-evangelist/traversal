@@ -1,0 +1,106 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Traversal Sessions API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sessions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List sessions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.traversal.com/v1/sessions",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number (1-indexed)."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Number of sessions per page."
+              }
+            ]
+          },
+          "docs": "Returns sessions created via the V1 API, scoped to the authenticated\nuser's organization. Sessions created in the web app are not included.\n\n**Requires the `admin` role.** API keys created by members can call\nevery other Sessions endpoint, but this one is admin-only because it\nreturns sessions across all users in the organization. Calls from a\nmember-role key return `403 Forbidden`.\n\nIf `page` and `limit` are both omitted, all sessions are returned in a\nsingle response.\n"
+        },
+        {
+          "info": {
+            "name": "Create a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.traversal.com/v1/sessions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a new investigation. The request returns immediately while\nTraversal investigates in the background — poll `GET /v1/sessions/{session_id}`\nuntil the session reaches the `idle` state to retrieve the result.\n\nEach organization is limited to **15 concurrent running sessions**\n(a running investigation or an in-flight follow-up both count toward\nthis limit). Exceeding the limit returns `429 Too Many Requests` with\n`retry_after`.\n"
+        },
+        {
+          "info": {
+            "name": "Get a session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.traversal.com/v1/sessions/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the session."
+              }
+            ]
+          },
+          "docs": "Retrieves a single session, including its full conversation history.\nThis is the only endpoint that populates the `messages` array — all\nother endpoints return `messages: null`.\n"
+        },
+        {
+          "info": {
+            "name": "Send a follow-up message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.traversal.com/v1/sessions/:session_id/messages",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Sends a follow-up question on an existing session. Traversal uses the\nfull conversation history as context.\n\nThe session must be in the `idle` status. If it is `running` or\n`follow_up_running`, the API returns `409 Conflict` with `retry_after`.\nPoll `GET /v1/sessions/{session_id}` until the session status returns\nto `idle` to retrieve the assistant response.\n\nFollow-ups count toward the same **15 concurrent running sessions**\nper-organization limit as `POST /v1/sessions`. If the organization is\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

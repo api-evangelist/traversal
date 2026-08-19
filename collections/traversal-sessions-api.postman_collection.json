@@ -1,0 +1,1694 @@
+{
+  "item": [
+    {
+      "id": "b997d20b-d7dd-4564-8530-df1d13b02582",
+      "name": "Sessions",
+      "description": {
+        "content": "Create, list, retrieve, and continue investigation sessions.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b371f4b8-16f9-4650-9027-455431e810c8",
+          "name": "Create a session",
+          "request": {
+            "name": "Create a session",
+            "description": {
+              "content": "Starts a new investigation. The request returns immediately while\nTraversal investigates in the background — poll `GET /v1/sessions/{session_id}`\nuntil the session reaches the `idle` state to retrieve the result.\n\nEach organization is limited to **15 concurrent running sessions**\n(a running investigation or an in-flight follow-up both count toward\nthis limit). Exceeding the limit returns `429 Too Many Requests` with\n`retry_after`.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "sessions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"<string>\",\n  \"idempotency_key\": \"<string>\",\n  \"title\": \"<string,null>\",\n  \"time\": \"<string,null-date-time>\",\n  \"thinking_mode\": \"auto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ccd8cfd1-7bb9-463b-b98a-61765d7d25f8",
+              "name": "Idempotency key matched an existing session; the existing session is returned unchanged.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"status\": \"follow_up_running\",\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"created_at\": \"2024-03-15T14:35:00Z\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"updated_at\": \"2024-03-15T14:38:12Z\",\n  \"messages\": [\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    },\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0f0fde76-908c-419b-a3b5-6dcfabb9f98c",
+              "name": "Session created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"status\": \"follow_up_running\",\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"created_at\": \"2024-03-15T14:35:00Z\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"updated_at\": \"2024-03-15T14:38:12Z\",\n  \"messages\": [\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    },\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3b778251-12eb-4d6d-acf8-2f94f9be5d26",
+              "name": "Invalid or missing fields in the request body. The `message` indicates which field failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a4bb7d86-ea95-4791-a10d-c180c027159c",
+              "name": "Missing, invalid, or revoked API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7afba1af-7205-4341-afd7-ac4813bcdc38",
+              "name": "V1 API not enabled for the organization, or the authenticated user has insufficient role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4d139b04-0254-4de9-96d1-fa60da7bf900",
+              "name": "Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "13a118ea-b234-4bf6-a40f-66631f838df1",
+              "name": "An unexpected error occurred on the server.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e7a39f5c-5c6a-4723-9890-b5d97916c6e7",
+              "name": "Investigation infrastructure is not available.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"time\": \"2024-03-15T14:30:00Z\",\n  \"idempotency_key\": \"pagerduty-incident-P12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9af4b333-9cb2-43d1-9dd6-cdc92811ab0e",
+          "name": "List sessions",
+          "request": {
+            "name": "List sessions",
+            "description": {
+              "content": "Returns sessions created via the V1 API, scoped to the authenticated\nuser's organization. Sessions created in the web app are not included.\n\n**Requires the `admin` role.** API keys created by members can call\nevery other Sessions endpoint, but this one is admin-only because it\nreturns sessions across all users in the organization. Calls from a\nmember-role key return `403 Forbidden`.\n\nIf `page` and `limit` are both omitted, all sessions are returned in a\nsingle response.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "sessions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "Page number (1-indexed)."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer>",
+                  "description": "Number of sessions per page."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "cb937ad4-070e-4c7e-912d-404eece02093",
+              "name": "A page of sessions.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"sessions\": [\n    {\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"status\": \"failed\",\n      \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n      \"created_at\": \"2024-03-15T14:35:00Z\",\n      \"title\": \"Elevated error rate in checkout service\",\n      \"updated_at\": \"2024-03-15T14:38:12Z\",\n      \"messages\": [\n        {\n          \"id\": \"msg-001-uuid\",\n          \"role\": \"assistant\",\n          \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n          \"created_at\": \"2024-03-15T14:38:12Z\"\n        },\n        {\n          \"id\": \"msg-001-uuid\",\n          \"role\": \"assistant\",\n          \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n          \"created_at\": \"2024-03-15T14:38:12Z\"\n        }\n      ]\n    },\n    {\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"status\": \"follow_up_running\",\n      \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n      \"created_at\": \"2024-03-15T14:35:00Z\",\n      \"title\": \"Elevated error rate in checkout service\",\n      \"updated_at\": \"2024-03-15T14:38:12Z\",\n      \"messages\": [\n        {\n          \"id\": \"msg-001-uuid\",\n          \"role\": \"assistant\",\n          \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n          \"created_at\": \"2024-03-15T14:38:12Z\"\n        },\n        {\n          \"id\": \"msg-001-uuid\",\n          \"role\": \"assistant\",\n          \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n          \"created_at\": \"2024-03-15T14:38:12Z\"\n        }\n      ]\n    }\n  ],\n  \"count\": 1837,\n  \"total\": 741,\n  \"prev\": 6676,\n  \"next\": 7839\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e08dd9da-b9e5-4276-abbd-64567e81a097",
+              "name": "Missing, invalid, or revoked API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbe9b27b-808d-44ef-805a-b62dc1989470",
+              "name": "V1 API not enabled for the organization, or the authenticated user has insufficient role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "76262a09-163f-4749-91b6-97337e356e1d",
+              "name": "An unexpected error occurred on the server.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3fc909a3-ce77-4367-baee-0a10df3b4f61",
+          "name": "Get a session",
+          "request": {
+            "name": "Get a session",
+            "description": {
+              "content": "Retrieves a single session, including its full conversation history.\nThis is the only endpoint that populates the `messages` array — all\nother endpoints return `messages: null`.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "sessions",
+                ":session_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "session_id",
+                  "description": "(Required) The unique identifier of the session."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e55b87db-46d0-4a6b-88bc-79c879003d08",
+              "name": "The session, with conversation history.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"status\": \"follow_up_running\",\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"created_at\": \"2024-03-15T14:35:00Z\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"updated_at\": \"2024-03-15T14:38:12Z\",\n  \"messages\": [\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    },\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d0c06231-ccba-4e3a-8e8a-675eb56c7c9d",
+              "name": "Missing, invalid, or revoked API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d70fd54f-12d6-48ec-a529-14ea1989121b",
+              "name": "V1 API not enabled for the organization, or the authenticated user has insufficient role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "069b0a69-38b0-4360-9cc3-c2f0392ca3f0",
+              "name": "Session does not exist or does not belong to your organization.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cf3bbd0a-5635-4ba0-b2d8-ae6ae0a54554",
+              "name": "An unexpected error occurred on the server.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7bd459db-4a38-4dc5-903d-a775846c37ea",
+          "name": "Send a follow-up message",
+          "request": {
+            "name": "Send a follow-up message",
+            "description": {
+              "content": "Sends a follow-up question on an existing session. Traversal uses the\nfull conversation history as context.\n\nThe session must be in the `idle` status. If it is `running` or\n`follow_up_running`, the API returns `409 Conflict` with `retry_after`.\nPoll `GET /v1/sessions/{session_id}` until the session status returns\nto `idle` to retrieve the assistant response.\n\nFollow-ups count toward the same **15 concurrent running sessions**\nper-organization limit as `POST /v1/sessions`. If the organization is\nalready at the limit, the request returns `429 Too Many Requests` with\n`retry_after`.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "sessions",
+                ":session_id",
+                "messages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "session_id",
+                  "description": "(Required) The unique identifier of the session."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"<string>\",\n  \"thinking_mode\": \"auto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4c0e063b-4a0c-4c16-a598-152085a2bbb3",
+              "name": "Follow-up accepted; investigation is running.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"assistant_message_id\": \"msg-004-uuid\",\n  \"created_at\": \"2024-03-15T14:35:00Z\",\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"input\": \"Our checkout service started returning 500 errors at 2024-03-15T14:30:00Z. Error rate jumped from 0.1% to 15%.\",\n  \"status\": \"failed\",\n  \"user_message_id\": \"msg-003-uuid\",\n  \"title\": \"Elevated error rate in checkout service\",\n  \"updated_at\": \"2024-03-15T14:38:12Z\",\n  \"messages\": [\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"assistant\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    },\n    {\n      \"id\": \"msg-001-uuid\",\n      \"role\": \"user\",\n      \"markdown_content\": \"## Investigation Summary\\n\\nI investigated the elevated error rate...\",\n      \"created_at\": \"2024-03-15T14:38:12Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "73d09bca-6bc1-4ef6-b255-2390df2af6ae",
+              "name": "Invalid or missing fields in the request body. The `message` indicates which field failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c6414475-7fb3-4b0c-98db-848cce78724c",
+              "name": "Missing, invalid, or revoked API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3cfc0a50-334d-49d2-8bae-a34254d79013",
+              "name": "V1 API not enabled for the organization, or the authenticated user has insufficient role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "54da6db3-0283-42dd-b808-f40797d65ea2",
+              "name": "Session does not exist or does not belong to your organization.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a05ca881-ff09-43d3-95d7-0c6a8dc5da80",
+              "name": "Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "118918dd-f3e0-44dc-b32b-3fa20c9623f1",
+              "name": "Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9cf215c-a9c9-4879-b66b-f381e6e1d916",
+              "name": "An unexpected error occurred on the server.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cfbb57e3-c782-404e-982e-709726d9314b",
+              "name": "Investigation infrastructure is not available.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "sessions",
+                    ":session_id",
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) The unique identifier of the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"input\": \"Can you check if the database connection pool was exhausted during the incident?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"message\": \"string\",\n    \"retry_after\": 6766\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.traversal.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d66eace7-c33f-4e08-bb22-b2554bc30fbe",
+    "name": "Traversal Sessions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The V1 Sessions API lets you launch investigations, send follow-up questions,\nand retrieve results programmatically. Sessions are the same investigation\nprimitive that powers the Traversal web application.\n\nAll endpoints require a Bearer token. The authenticated user must have at\nleast the `MEMBER` role within the organization, and the V1 API must be\nenabled for that organization — otherwise endpoints return `403 Forbidden`.\n",
+      "type": "text/plain"
+    }
+  }
+}
