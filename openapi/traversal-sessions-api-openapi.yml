@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: Traversal Sessions API
   version: 1.0.0
@@ -13,9 +13,7 @@ info:
 
     least the `MEMBER` role within the organization, and the V1 API must be
 
-    enabled for that organization — otherwise endpoints return `403 Forbidden`.
-
-    '
+    enabled for that organization — otherwise endpoints return `403 Forbidden`.'
 servers:
 - url: https://api.traversal.com
   description: Traversal API
@@ -44,9 +42,7 @@ paths:
 
         this limit). Exceeding the limit returns `429 Too Many Requests` with
 
-        `retry_after`.
-
-        '
+        `retry_after`.'
       requestBody:
         required: true
         content:
@@ -106,9 +102,7 @@ paths:
 
         If `page` and `limit` are both omitted, all sessions are returned in a
 
-        single response.
-
-        '
+        single response.'
       parameters:
       - name: page
         in: query
@@ -147,9 +141,7 @@ paths:
 
         This is the only endpoint that populates the `messages` array — all
 
-        other endpoints return `messages: null`.
-
-        '
+        other endpoints return `messages: null`.'
       parameters:
       - $ref: '#/components/parameters/SessionId'
       responses:
@@ -193,9 +185,7 @@ paths:
 
         already at the limit, the request returns `429 Too Many Requests` with
 
-        `retry_after`.
-
-        '
+        `retry_after`.'
       parameters:
       - $ref: '#/components/parameters/SessionId'
       requestBody:
@@ -291,6 +281,22 @@ components:
           format: date-time
           description: When the message was created (UTC).
           example: '2024-03-15T14:38:12Z'
+    SessionStatus:
+      type: string
+      enum:
+      - running
+      - idle
+      - follow_up_running
+      - failed
+      description: '- `running` — a new investigation is in progress.
+
+        - `idle` — investigation is complete and ready for follow-ups.
+
+        - `follow_up_running` — a follow-up message is being processed.
+
+        - `failed` — the investigation or follow-up errored or timed out.
+
+        '
     Error:
       type: object
       required:
@@ -315,62 +321,6 @@ components:
                 standard `Retry-After` HTTP header with the same value.
 
                 '
-    SessionWithMessages:
-      allOf:
-      - $ref: '#/components/schemas/Session'
-      - type: object
-        properties:
-          messages:
-            type: array
-            items:
-              $ref: '#/components/schemas/Message'
-    CreateSessionRequest:
-      type: object
-      required:
-      - input
-      - idempotency_key
-      properties:
-        input:
-          type: string
-          description: The incident description or question to investigate.
-        title:
-          type:
-          - string
-          - 'null'
-          maxLength: 256
-          description: A short label for the session. Auto-generated if omitted.
-        time:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: ISO-8601 timestamp of when the incident occurred.
-        idempotency_key:
-          type: string
-          maxLength: 128
-          description: 'Unique client-generated key for idempotent creation. Submitting
-
-            the same key twice returns the original session (with `200 OK`)
-
-            rather than creating a new one. Use a value tied to the upstream
-
-            event you are reacting to (e.g., a PagerDuty incident ID) so
-
-            retries don''t duplicate sessions.
-
-            '
-        thinking_mode:
-          $ref: '#/components/schemas/ThinkingMode'
-    FollowUpMessageRequest:
-      type: object
-      required:
-      - input
-      properties:
-        input:
-          type: string
-          description: The follow-up question or instruction.
-        thinking_mode:
-          $ref: '#/components/schemas/ThinkingMode'
     Session:
       type: object
       required:
@@ -431,22 +381,25 @@ components:
         - `fast` — run a quick, exploratory pass.
 
         '
-    SessionStatus:
-      type: string
-      enum:
-      - running
-      - idle
-      - follow_up_running
-      - failed
-      description: '- `running` — a new investigation is in progress.
-
-        - `idle` — investigation is complete and ready for follow-ups.
-
-        - `follow_up_running` — a follow-up message is being processed.
-
-        - `failed` — the investigation or follow-up errored or timed out.
-
-        '
+    SessionWithMessages:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        properties:
+          messages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Message'
+    FollowUpMessageRequest:
+      type: object
+      required:
+      - input
+      properties:
+        input:
+          type: string
+          description: The follow-up question or instruction.
+        thinking_mode:
+          $ref: '#/components/schemas/ThinkingMode'
     FollowUpMessageResponse:
       allOf:
       - $ref: '#/components/schemas/Session'
@@ -469,39 +422,52 @@ components:
 
               '
             example: msg-004-uuid
+    CreateSessionRequest:
+      type: object
+      required:
+      - input
+      - idempotency_key
+      properties:
+        input:
+          type: string
+          description: The incident description or question to investigate.
+        title:
+          type:
+          - string
+          - 'null'
+          maxLength: 256
+          description: A short label for the session. Auto-generated if omitted.
+        time:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: ISO-8601 timestamp of when the incident occurred.
+        idempotency_key:
+          type: string
+          maxLength: 128
+          description: 'Unique client-generated key for idempotent creation. Submitting
+
+            the same key twice returns the original session (with `200 OK`)
+
+            rather than creating a new one. Use a value tied to the upstream
+
+            event you are reacting to (e.g., a PagerDuty incident ID) so
+
+            retries don''t duplicate sessions.
+
+            '
+        thinking_mode:
+          $ref: '#/components/schemas/ThinkingMode'
   responses:
-    Forbidden:
-      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ServiceUnavailable:
-      description: Investigation infrastructure is not available.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing, invalid, or revoked API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     Conflict:
       description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Session does not exist or does not belong to your organization.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    InternalServerError:
-      description: An unexpected error occurred on the server.
+    TooManyRequests:
+      description: Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).
       content:
         application/json:
           schema:
@@ -512,8 +478,32 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).
+    ServiceUnavailable:
+      description: Investigation infrastructure is not available.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: An unexpected error occurred on the server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, invalid, or revoked API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Session does not exist or does not belong to your organization.
       content:
         application/json:
           schema:
