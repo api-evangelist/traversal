@@ -223,57 +223,14 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
 components:
   schemas:
-    ThinkingMode:
-      type: string
-      enum:
-      - auto
-      - deep
-      - fast
-      default: auto
-      description: 'Controls how much investigation depth Traversal applies.
-
-        - `auto` — Traversal classifies the request and picks a depth.
-
-        - `deep` — force a thorough root-cause analysis.
-
-        - `fast` — run a quick, exploratory pass.
-
-        '
-    CreateSessionRequest:
+    FollowUpMessageRequest:
       type: object
       required:
       - input
-      - idempotency_key
       properties:
         input:
           type: string
-          description: The incident description or question to investigate.
-        title:
-          type:
-          - string
-          - 'null'
-          maxLength: 256
-          description: A short label for the session. Auto-generated if omitted.
-        time:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: ISO-8601 timestamp of when the incident occurred.
-        idempotency_key:
-          type: string
-          maxLength: 128
-          description: 'Unique client-generated key for idempotent creation. Submitting
-
-            the same key twice returns the original session (with `200 OK`)
-
-            rather than creating a new one. Use a value tied to the upstream
-
-            event you are reacting to (e.g., a PagerDuty incident ID) so
-
-            retries don''t duplicate sessions.
-
-            '
+          description: The follow-up question or instruction.
         thinking_mode:
           $ref: '#/components/schemas/ThinkingMode'
     SessionWithMessages:
@@ -285,46 +242,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Message'
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: object
-          required:
-          - message
-          properties:
-            message:
-              type: string
-              description: Human-readable explanation of the error.
-            retry_after:
-              type:
-              - integer
-              - 'null'
-              description: 'Suggested seconds to wait before retrying. Present on `429`
-
-                and `409` responses. When set, the response also includes a
-
-                standard `Retry-After` HTTP header with the same value.
-
-                '
-    SessionStatus:
-      type: string
-      enum:
-      - running
-      - idle
-      - follow_up_running
-      - failed
-      description: '- `running` — a new investigation is in progress.
-
-        - `idle` — investigation is complete and ready for follow-ups.
-
-        - `follow_up_running` — a follow-up message is being processed.
-
-        - `failed` — the investigation or follow-up errored or timed out.
-
-        '
     Session:
       type: object
       required:
@@ -369,34 +286,44 @@ components:
           description: Conversation history. Only populated on `GET /v1/sessions/{session_id}`.
           items:
             $ref: '#/components/schemas/Message'
-    SessionList:
-      type: object
-      required:
-      - sessions
-      - count
-      - total
-      properties:
-        sessions:
-          type: array
-          description: Sessions on the current page.
-          items:
-            $ref: '#/components/schemas/Session'
-        count:
-          type: integer
-          description: Number of sessions on this page.
-        prev:
-          type:
-          - integer
-          - 'null'
-          description: Previous page number. `null` if first page.
-        next:
-          type:
-          - integer
-          - 'null'
-          description: Next page number. `null` if last page.
-        total:
-          type: integer
-          description: Total sessions across all pages.
+    FollowUpMessageResponse:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        required:
+        - user_message_id
+        - assistant_message_id
+        properties:
+          user_message_id:
+            type: string
+            description: ID of the recorded user message.
+            example: msg-003-uuid
+          assistant_message_id:
+            type: string
+            description: 'ID of the assistant message that will contain the response.
+
+              Poll `GET /v1/sessions/{session_id}` until the session status
+
+              is `idle` to retrieve the completed response.
+
+              '
+            example: msg-004-uuid
+    SessionStatus:
+      type: string
+      enum:
+      - running
+      - idle
+      - follow_up_running
+      - failed
+      description: '- `running` — a new investigation is in progress.
+
+        - `idle` — investigation is complete and ready for follow-ups.
+
+        - `follow_up_running` — a follow-up message is being processed.
+
+        - `failed` — the investigation or follow-up errored or timed out.
+
+        '
     Message:
       type: object
       required:
@@ -427,53 +354,114 @@ components:
           format: date-time
           description: When the message was created (UTC).
           example: '2024-03-15T14:38:12Z'
-    FollowUpMessageRequest:
+    ThinkingMode:
+      type: string
+      enum:
+      - auto
+      - deep
+      - fast
+      default: auto
+      description: 'Controls how much investigation depth Traversal applies.
+
+        - `auto` — Traversal classifies the request and picks a depth.
+
+        - `deep` — force a thorough root-cause analysis.
+
+        - `fast` — run a quick, exploratory pass.
+
+        '
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              description: Human-readable explanation of the error.
+            retry_after:
+              type:
+              - integer
+              - 'null'
+              description: 'Suggested seconds to wait before retrying. Present on `429`
+
+                and `409` responses. When set, the response also includes a
+
+                standard `Retry-After` HTTP header with the same value.
+
+                '
+    SessionList:
+      type: object
+      required:
+      - sessions
+      - count
+      - total
+      properties:
+        sessions:
+          type: array
+          description: Sessions on the current page.
+          items:
+            $ref: '#/components/schemas/Session'
+        count:
+          type: integer
+          description: Number of sessions on this page.
+        prev:
+          type:
+          - integer
+          - 'null'
+          description: Previous page number. `null` if first page.
+        next:
+          type:
+          - integer
+          - 'null'
+          description: Next page number. `null` if last page.
+        total:
+          type: integer
+          description: Total sessions across all pages.
+    CreateSessionRequest:
       type: object
       required:
       - input
+      - idempotency_key
       properties:
         input:
           type: string
-          description: The follow-up question or instruction.
+          description: The incident description or question to investigate.
+        title:
+          type:
+          - string
+          - 'null'
+          maxLength: 256
+          description: A short label for the session. Auto-generated if omitted.
+        time:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: ISO-8601 timestamp of when the incident occurred.
+        idempotency_key:
+          type: string
+          maxLength: 128
+          description: 'Unique client-generated key for idempotent creation. Submitting
+
+            the same key twice returns the original session (with `200 OK`)
+
+            rather than creating a new one. Use a value tied to the upstream
+
+            event you are reacting to (e.g., a PagerDuty incident ID) so
+
+            retries don''t duplicate sessions.
+
+            '
         thinking_mode:
           $ref: '#/components/schemas/ThinkingMode'
-    FollowUpMessageResponse:
-      allOf:
-      - $ref: '#/components/schemas/Session'
-      - type: object
-        required:
-        - user_message_id
-        - assistant_message_id
-        properties:
-          user_message_id:
-            type: string
-            description: ID of the recorded user message.
-            example: msg-003-uuid
-          assistant_message_id:
-            type: string
-            description: 'ID of the assistant message that will contain the response.
-
-              Poll `GET /v1/sessions/{session_id}` until the session status
-
-              is `idle` to retrieve the completed response.
-
-              '
-            example: msg-004-uuid
   responses:
-    Unauthorized:
-      description: Missing, invalid, or revoked API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Session does not exist or does not belong to your organization.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Conflict:
-      description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
+    BadRequest:
+      description: Invalid or missing fields in the request body. The `message` indicates which field failed validation.
       content:
         application/json:
           schema:
@@ -484,8 +472,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid or missing fields in the request body. The `message` indicates which field failed validation.
+    Conflict:
+      description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
       content:
         application/json:
           schema:
@@ -496,14 +490,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    ServiceUnavailable:
-      description: Investigation infrastructure is not available.
+    NotFound:
+      description: Session does not exist or does not belong to your organization.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Forbidden:
-      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
+    Unauthorized:
+      description: Missing, invalid, or revoked API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceUnavailable:
+      description: Investigation infrastructure is not available.
       content:
         application/json:
           schema:
