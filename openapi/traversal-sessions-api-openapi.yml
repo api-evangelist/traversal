@@ -222,53 +222,78 @@ paths:
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
 components:
+  responses:
+    ServiceUnavailable:
+      description: Investigation infrastructure is not available.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid or missing fields in the request body. The `message` indicates which field failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: An unexpected error occurred on the server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Session does not exist or does not belong to your organization.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, invalid, or revoked API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    SessionStatus:
-      type: string
-      enum:
-      - running
-      - idle
-      - follow_up_running
-      - failed
-      description: '- `running` — a new investigation is in progress.
+    FollowUpMessageResponse:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        required:
+        - user_message_id
+        - assistant_message_id
+        properties:
+          user_message_id:
+            type: string
+            description: ID of the recorded user message.
+            example: msg-003-uuid
+          assistant_message_id:
+            type: string
+            description: 'ID of the assistant message that will contain the response.
 
-        - `idle` — investigation is complete and ready for follow-ups.
+              Poll `GET /v1/sessions/{session_id}` until the session status
 
-        - `follow_up_running` — a follow-up message is being processed.
+              is `idle` to retrieve the completed response.
 
-        - `failed` — the investigation or follow-up errored or timed out.
-
-        '
-    Message:
-      type: object
-      required:
-      - id
-      - role
-      - markdown_content
-      - created_at
-      properties:
-        id:
-          type: string
-          description: Unique message identifier.
-          example: msg-001-uuid
-        role:
-          type: string
-          enum:
-          - user
-          - assistant
-          description: The author of the message.
-        markdown_content:
-          type: string
-          description: Message content in Markdown.
-          example: '## Investigation Summary
-
-
-            I investigated the elevated error rate...'
-        created_at:
-          type: string
-          format: date-time
-          description: When the message was created (UTC).
-          example: '2024-03-15T14:38:12Z'
+              '
+            example: msg-004-uuid
     CreateSessionRequest:
       type: object
       required:
@@ -306,6 +331,39 @@ components:
             '
         thinking_mode:
           $ref: '#/components/schemas/ThinkingMode'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              description: Human-readable explanation of the error.
+            retry_after:
+              type:
+              - integer
+              - 'null'
+              description: 'Suggested seconds to wait before retrying. Present on `429`
+
+                and `409` responses. When set, the response also includes a
+
+                standard `Retry-After` HTTP header with the same value.
+
+                '
+    SessionWithMessages:
+      allOf:
+      - $ref: '#/components/schemas/Session'
+      - type: object
+        properties:
+          messages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Message'
     ThinkingMode:
       type: string
       enum:
@@ -322,6 +380,36 @@ components:
         - `fast` — run a quick, exploratory pass.
 
         '
+    Message:
+      type: object
+      required:
+      - id
+      - role
+      - markdown_content
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Unique message identifier.
+          example: msg-001-uuid
+        role:
+          type: string
+          enum:
+          - user
+          - assistant
+          description: The author of the message.
+        markdown_content:
+          type: string
+          description: Message content in Markdown.
+          example: '## Investigation Summary
+
+
+            I investigated the elevated error rate...'
+        created_at:
+          type: string
+          format: date-time
+          description: When the message was created (UTC).
+          example: '2024-03-15T14:38:12Z'
     Session:
       type: object
       required:
@@ -366,61 +454,16 @@ components:
           description: Conversation history. Only populated on `GET /v1/sessions/{session_id}`.
           items:
             $ref: '#/components/schemas/Message'
-    FollowUpMessageResponse:
-      allOf:
-      - $ref: '#/components/schemas/Session'
-      - type: object
-        required:
-        - user_message_id
-        - assistant_message_id
-        properties:
-          user_message_id:
-            type: string
-            description: ID of the recorded user message.
-            example: msg-003-uuid
-          assistant_message_id:
-            type: string
-            description: 'ID of the assistant message that will contain the response.
-
-              Poll `GET /v1/sessions/{session_id}` until the session status
-
-              is `idle` to retrieve the completed response.
-
-              '
-            example: msg-004-uuid
-    SessionWithMessages:
-      allOf:
-      - $ref: '#/components/schemas/Session'
-      - type: object
-        properties:
-          messages:
-            type: array
-            items:
-              $ref: '#/components/schemas/Message'
-    Error:
+    FollowUpMessageRequest:
       type: object
       required:
-      - error
+      - input
       properties:
-        error:
-          type: object
-          required:
-          - message
-          properties:
-            message:
-              type: string
-              description: Human-readable explanation of the error.
-            retry_after:
-              type:
-              - integer
-              - 'null'
-              description: 'Suggested seconds to wait before retrying. Present on `429`
-
-                and `409` responses. When set, the response also includes a
-
-                standard `Retry-After` HTTP header with the same value.
-
-                '
+        input:
+          type: string
+          description: The follow-up question or instruction.
+        thinking_mode:
+          $ref: '#/components/schemas/ThinkingMode'
     SessionList:
       type: object
       required:
@@ -449,16 +492,22 @@ components:
         total:
           type: integer
           description: Total sessions across all pages.
-    FollowUpMessageRequest:
-      type: object
-      required:
-      - input
-      properties:
-        input:
-          type: string
-          description: The follow-up question or instruction.
-        thinking_mode:
-          $ref: '#/components/schemas/ThinkingMode'
+    SessionStatus:
+      type: string
+      enum:
+      - running
+      - idle
+      - follow_up_running
+      - failed
+      description: '- `running` — a new investigation is in progress.
+
+        - `idle` — investigation is complete and ready for follow-ups.
+
+        - `follow_up_running` — a follow-up message is being processed.
+
+        - `failed` — the investigation or follow-up errored or timed out.
+
+        '
   parameters:
     SessionId:
       name: session_id
@@ -468,55 +517,6 @@ components:
       schema:
         type: string
         format: uuid
-  responses:
-    ServiceUnavailable:
-      description: Investigation infrastructure is not available.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid or missing fields in the request body. The `message` indicates which field failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing, invalid, or revoked API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Organization has reached the limit of 15 concurrent running sessions (new investigations and in-flight follow-ups both count). Includes `retry_after` (default 30s).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    InternalServerError:
-      description: An unexpected error occurred on the server.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Session does not exist or does not belong to your organization.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Forbidden:
-      description: V1 API not enabled for the organization, or the authenticated user has insufficient role.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Conflict:
-      description: Session is not `idle` (e.g., still `running` or `follow_up_running`). Includes `retry_after`.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
